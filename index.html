@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Team Profile</title>
+<style>
+body { font-family: Arial; padding: 20px; }
+.member { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+</style>
+</head>
+<body>
+<h2>Add Team Member</h2>
+<input type="text" id="name" placeholder="Name" />
+<input type="text" id="role" placeholder="Role" />
+<input type="email" id="email" placeholder="Email" />
+<input type="text" id="image" placeholder="Image URL" />
+<button onclick="addMember()">Add</button>
+
+<h2>Team</h2>
+<div id="teamList"></div>
+
+<script>
+const endpoint = 'https://script.google.com/macros/s/AKfycbxRJRlGCtAhG5xMpGtGuSoyHQZhQcRh7SVpTfDJZhCfHeiUKBPRnyYe5ZdPtqrzWJt-zw/exec';
+
+async function loadTeam() {
+const res = await fetch(endpoint);
+const team = await res.json();
+document.getElementById('teamList').innerHTML = team.map(member => `
+<div class="member">
+<img src="${member.image}" width="50"><br>
+<strong>${member.name}</strong><br>${member.role}<br>${member.email}
+</div>
+`).join('');
+}
+
+async function addMember() {
+const data = {
+name: document.getElementById('name').value,
+role: document.getElementById('role').value,
+email: document.getElementById('email').value,
+image: document.getElementById('image').value
+};
+await fetch(endpoint, {
+method: 'POST',
+body: JSON.stringify(data),
+headers: { 'Content-Type': 'application/json' }
+});
+loadTeam();
+}
+
+loadTeam();
+</script>
+</body>
+</html>
